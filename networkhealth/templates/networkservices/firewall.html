@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>This page is to run commands against Outsation Firewalls</h1>
+<h4>This module is meant to work across platforms.<br>
+    Not just ASA, or not just Meraki.<br>
+    So far one command.</h4>
+<form method="post">
+    {{ form.as_p }} {% csrf_token %}
+    <input type="submit" class="btn btn-primary" value="Run Command">
+</form>
+<br>
+<h2>Command Output for {{ site_name }}</h2>
+<h4>{{ datetime }}</h4>
+<pre>{{ text }}</pre>
+{% endblock %}

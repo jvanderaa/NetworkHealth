@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="jumbotron">
+        <h1 class="display-4">Welcome to Network Services Page</h1>
+        <p class="lead">Here you will find various handy things to give you information about the SCA Network.</p>
+        <p>This is <strong>not</strong> a documentation site. There are tools already built and in place to do so.</p>
+        <hr class="my-4">
+        <p class="lead">NetworkGroup@suncountry.com</p>
+    </div>
+    
+    <p></p>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Run Switch Commands</h5>
+                    <p class="card-text">See additional information of various show commands Network allows to be run</p>
+                    <a href="switchcommands.html" class="btn btn-primary">Commands</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">All Stations Health</h5>
+                    <p class="card-text">A site that shows the health of all stations in one view. Health check is run every 10 minutes.
+                    </p>
+                    <a href="alloutstations.html" class="btn btn-primary">All Sites Health</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Network SYI Site</h5>
+                    <p class="card-text">Link to additional Network Documentation, processes, and such.</p>
+                    <a href="https://syi.suncountry.com/sites/it/Network/SitePages/Home.aspx" target="_blank" class="btn btn-primary">SYI: Network</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">SmokePing</h5>
+                    <p class="card-text">Check the historical response time of a site.
+                    </p>
+                    <a href="http://smokeping.suncountry.com/cgi-bin/smokeping.cgi" target="_blank" class="btn btn-primary">SmokePing</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Netbox</h5>
+                    <p class="card-text">Link to Sun Country's DCIM/IPAM (Data Center Infrastructure Management/IP Address Management) tool.</p>
+                    <a href="http://netbox.suncountry.com" target="_blank" class="btn btn-primary">Netbox</a>
+                </div>
+            </div>
+        </div>
+        <!-- <div class="col-sm-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title"></h5>
+                    <p class="card-text"></p>
+                    <a href="#" target="_blank" class="btn btn-primary">SmokePing</a>
+                </div>
+            </div>
+        </div> -->
+    </div>
+    <br>
+
+    <p><small>This is still a work in progress. Any mis-use of this site could be seen as a violation of company policy.</small></p>
+    
+{% endblock  %}

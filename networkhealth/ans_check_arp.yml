@@ -1,0 +1,25 @@
+---
+- name: Check arp table of Cisco switch
+  connection: local
+  gather_facts: no
+  hosts: switch_test
+  vars_files:
+    - /Users/joshv/.creds/my_net.yml
+  vars:
+    cli:
+      username: "{{ u }}"
+      password: "{{ p }}"
+      host: "{{ inventory_hostname }}"
+      timeout: 200
+
+  tasks:
+    - name: Get arp table
+      ios_command:
+        provider: "{{ cli }}"
+        commands:
+          - show arp
+      register: get_arp
+
+    - name: debug
+      debug:
+        msg: "{{ get_arp }}"

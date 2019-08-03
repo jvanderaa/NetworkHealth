@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+    <h1>This page is to run commands against various ROUTERS.</h1>
+    <h3>These commands only work against routers.</h3>
+        <form method="post">
+            {{ form.as_p }}
+            {% csrf_token %}
+            <input type="submit" class="btn btn-primary" value="Run Command">
+        </form>
+    <br>
+    <h2>Command Output</h2>
+    <pre>{{ text }}</pre>
+{% endblock  %}

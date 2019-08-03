@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>This page is to run commands against ASA Firewalls.</h1>
+<h3>To be determined what commands can be run. Select the drop down.</h3>
+<form method="post">
+    {{ form.as_p }} 
+    {% csrf_token %}
+    <input type="submit" class="btn btn-primary" value="Run Command">
+</form>
+<br>
+<p id="p1">
+<h2>Command Output for {{ device_name }}</h2>
+<h4>{{ datetime }}</h4>
+<br>
+<pre>{{ text }}</pre> 
+</p>
+{% endblock %}

@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block content %}
+    <h1>Network Services Outstation Health Page</h1><BR>
+    <h4 style="color:coral">This page will take about a minute to execute</h3><BR>
+    <p>This site is used to get an automated quick glance at the potential health of an outstation. 
+        There may be other errors causing the inability to process passengers at the site as well.
+        This data is still considered beta. Please submit feedback if this reports good without a caveat
+        being listed below. </p>
+    <form method="post">
+        {{ form.as_p }} {% csrf_token %}
+        <input type="submit" class="btn btn-primary" value="Check Site">
+    </form>
+    <br>
+    {% if site_name %}
+    <h2>Health Report for {{ site_name }}</h2>
+    <h4>{{ datetime }}</h4>
+    
+    <div id='results'>
+    <style>
+        table {border: 1px solid black; border-collapse: collapse;}
+    </style>
+             
+    <table width="100%">
+        <tr>
+            <th style="text-align: center">Site</th>
+            <th style="text-align: center">Ping Result</th>
+            <th style="text-align: center">ARP Result</th>
+            <th style="text-align: center">Overall Result</th>
+        </tr>
+        <tr>
+            <td style="text-align: center">
+                {{ site_name }}
+            </td>
+            <td style="text-align: center">
+                {% if text.ping %}
+                <div style="color:green;background-color:lightgray">Good</div>
+                {% elif text.ping == None %}
+                <br>
+                {% else %}
+                <div style="color:crimson;background-color:lightgray">Check SmokePing</div>
+                {% endif %}
+            </td>
+            <td style="text-align: center">
+                {% if text.arp %}
+                <div style="color:green;background-color:lightgray">Good</div>
+                {% elif text.arp == None %}
+                <br>
+                {% else %}
+                <div style="color:crimson;background-color:lightgray">Site Issue</div>
+                {% endif %}
+            </td>
+            <td style="text-align: center">
+                {% if text.ping and text.arp %}
+                <div style="color:green;background-color:lightgray">Good</div>
+                {% elif text.ping == None %}
+                {% else %}
+                <div style="color:crimson;background-color:lightgray">Take a closer look</div>
+                {% endif %}
+            </td>
+        </tr>
+    </table>
+    </div>
+    {% endif %}
+    {% if text.ping == False %} 
+    <p>
+        If Ping is showing an issue not at the Meraki sites, please escalate to CIS if there are station issues.<br><br>
+        Recommended actions:
+        <ul>
+        <li>Check with station to determine how Sabre is working</li>
+        <li>Check <a href="http://smokeping.suncountry.com/cgi-bin/smokeping.cgi?target=Outstations.{{ device_name }}" target="_blank">Smokeping</a> to see historical response (Green lines are good, red=very bad, and blue=circuit issues)</li>
+        <li>If issue in the United States, escalate to CIS for circuit issues. Also ask to flip to <code>4G Fault Tolerant Network</code></li>
+        <ul>
+            <li>Email CIS: <a href="mailto:helpdesk@cisvpn.com" target="_top">helpdesk@cisvpn.com</a></li>
+            <li>Call CIS: <a href="tel:555-555-5555">555-555-5555 (TBD Number)</a></li>
+        </ul>
+        <li>If a Meraki site, log into <a href="https://dashboard.meraki.com">Meraki Dashboard</a> to check the status. If site showing down, escalate to CIS</li>
+        </ul>
+    </p>
+    {% endif %}
+    <br><br>
+    <h2>Caveats</h2>
+    <p>
+        Meraki sites (STS, AUS, AUA, and TUS) all have something that is not fully complete that may cause this to show errors.
+    </p>
+    <br>
+    <h3>What is this doing?</h3>
+    <p>This script on the back end is doing two things to determine health.</p>
+    <ul>
+        <li>Ping Result: Logging into a Databank router, and executing an ping with 1400 bytes, 200 times to the outstation firewall.</li>
+        <li>ARP Result (ASA): Logging into the ASA on site and executing the command <code>show arp</code>. 
+            From there it is looking for either <code>CUTE</code> or <code>PCI</code> in the ARP table</li>
+        <li>ARP Result (Meraki): Making an API call to the Meraki dashboard, looking at the client table list. 
+            This is then looking for a client in VLAN3 (PCI - dedicated/Amedeus) or VLAN4 (ARINC/SITA)
+        </li>
+    </ul>
+{% endblock  %}

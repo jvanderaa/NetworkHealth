@@ -1,0 +1,139 @@
+{% extends "base.html" %} 
+{% block content %}
+<script>setTimeout(function () {
+        window.location.reload(1);
+    }, 60000);</script>
+    <h3>Health Report for Sun Country Outstations</h3>
+    <p>Ran at: {{ datetime }}</p>
+    <div id='results_issues'>
+        <style>
+            table {
+                border: 1px solid black;
+                border-collapse: collapse;
+            }
+        </style>
+
+        <h2>Sites with Issues</h2>
+        <table width="100%">
+            <tr>
+                <th style="text-align: center">Site</th>
+                <th style="text-align: center">Ping Result</th>
+                <th style="text-align: center">ARP Result</th>
+                <th style="text-align: center">Overall Result</th>
+            </tr>
+            {% for item in text %}
+                {% if not item.0.ping or not item.0.arp %}
+            <tr>
+                <td style="text-align: center">
+                    {{ item.2 }}
+                </td>
+                <td style="text-align: center">
+                    {% if item.0.ping %}
+                    <div style="color:black;background-color:lightgreen">Good</div>
+                    {% elif item.0.ping == None %}
+                    <br> {% else %}
+                    <div style="color:crimson;background-color:lightgray"><a href="http://smokeping.suncountry.com/cgi-bin/smokeping.cgi?target=Outstations.{{ item.1 }}" style="color:crimson" target="_blank">Check Smokeping</a></div>
+                    {% endif %}
+                </td>
+                <td style="text-align: center">
+                    {% if item.0.arp %}
+                    <div style="color:black;background-color:lightgreen">Good</div>
+                    {% elif item.0.arp == None %}
+                    <br> {% else %}
+                    <div style="color:crimson;background-color:lightgray">Site Issue</div>
+                    {% endif %}
+                </td>
+                <td style="text-align: center">
+                    {% if item.0.ping and item.0.arp %}
+                    <div style="color:black;background-color:lightgreen">Good</div>
+                    {% elif item.0.ping == None %} 
+                    {% elif not item.0.ping and not item.0.arp %}
+                    <div style="color:black;background-color:crimson">Site appears down</div>
+                    {% else %}
+                    <div style="color:crimson;background-color:lightgray">Check on site</div>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+        </table>
+        <div>
+            <h4>Known Issues</h4>
+            <p>
+                <br> STS: Site keeps turning off the stations.
+                <br> ZLO: Has ping response issues due to weak cellular (Primary at site)
+                <br>
+            </p>
+        </div>
+        <div>
+            <h4>What to do?</h4>
+            <p>ARP Issue: The firewall is either not reachable, or the firewall does not have a recent client attached. Check to see if there is a PC issue. </p>
+            <p>Ping Result: There may be circuit issues going on. If this shows consistently, check Smoke Ping to see if there are non green lines showing. If a constant colored line (not green), then escalate to CIS. Evaluate asking CIS to have XO put site on <code>4G Fault Tolerant Network</code></p>
+
+        </div>
+
+        <h2>Healthy Sites</h2>
+        <table width="100%">
+            <tr>
+                <th style="text-align: center">Site</th>
+                <th style="text-align: center">Ping Result</th>
+                <th style="text-align: center">ARP Result</th>
+                <th style="text-align: center">Overall Result</th>
+            </tr>
+            {% for item in text %}
+                {% if item.0.ping and item.0.arp %}
+            <tr>
+                <td style="text-align: center">
+                    {{ item.2 }}
+                </td>
+                <td style="text-align: center">
+                    {% if item.0.ping %}
+                    <div style="color:black;background-color:lightgreen">Good</div>
+                    {% elif item.0.ping == None %}
+                    <br> {% else %}
+                    <div style="color:crimson;background-color:lightgray"><a href="http://smokeping.suncountry.com/cgi-bin/smokeping.cgi?target=Outstations.{{ item.1 }}" style="color:crimson" target="_blank">Check Smokeping</a></div>
+                    {% endif %}
+                </td>
+                <td style="text-align: center">
+                    {% if item.0.arp %}
+                    <div style="color:black;background-color:lightgreen">Good</div>
+                    {% elif item.0.arp == None %}
+                    <br> {% else %}
+                    <div style="color:crimson;background-color:lightgray">Site Issue</div>
+                    {% endif %}
+                </td>
+                <td style="text-align: center">
+                    {% if item.0.ping and item.0.arp %}
+                    <div style="color:black;background-color:lightgreen">Good</div>
+                    {% elif item.0.ping == None %} 
+                    {% elif not item.0.ping and not item.0.arp %}
+                    <div style="color:black;background-color:crimson">Site appears down</div>
+                    {% else %}
+                    <div style="color:crimson;background-color:lightgray">Check on site</div>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+        </table>
+    </div>
+    <br>
+    <BR>
+    <p>This site is used to get an automated quick glance at the potential health of an outstation. There may be other errors causing
+        the inability to process passengers at the site as well. This data is still considered beta. Please submit feedback if
+        this reports good without a caveat being listed below. </p>
+    
+ 
+    <h3>What is this doing?</h3>
+    <p>This script on the back end is doing two things to determine health.</p>
+    <ul>
+        <li>Ping Result: Logging into a Databank router, and executing an ping with 1400 bytes, 200 times to the outstation firewall.</li>
+        <li>ARP Result (ASA): Logging into the ASA on site and executing the command
+            <code>show arp</code>. From there it is looking for either
+            <code>CUTE</code> or
+            <code>PCI</code> in the ARP table</li>
+        <li>ARP Result (Meraki): Making an API call to the Meraki dashboard, looking at the client table list. This is then looking
+            for a client in VLAN3 (PCI - dedicated/Amedeus) or VLAN4 (ARINC/SITA)
+        </li>
+    </ul>
+    {% endblock %}

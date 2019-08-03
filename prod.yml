@@ -1,0 +1,28 @@
+---
+# A playbook for execution from a CI/CD tool. Originally used by a Jenkins
+# installation to update the website whenever a new version of the application
+# was pushed to the git repository
+- name: Update from git
+  hosts: webservers
+  gather_facts: false
+
+  vars:
+    repository_link: "put the ssh link to the repository"
+
+  tasks:
+    - name: Pull down resources from GIT
+      git:
+        repo: "{{ repository_link }}"
+        dest: "/opt/web/NetworkHealthWeb"
+      register: git_result
+
+    - name: Debug git_result
+      debug:
+        msg: "{{ git_result }}"
+
+    - name: Restart SupervisorD
+      supervisorctl:
+        name: networkhealth
+        state: restarted
+      become: true
+      when: git_result['changed']
